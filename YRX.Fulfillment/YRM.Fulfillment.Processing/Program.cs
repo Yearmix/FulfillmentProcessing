@@ -18,8 +18,7 @@ namespace YRM.Fulfillment.Processing
             return _kernel.Get<T>(new ConstructorArgument("param", param));
         }
 
-        //DI of the brainfuck
-        public IDictionary<string, Func<string[], IRunable>> Actions = new Dictionary<string, Func<string[], IRunable>>()
+        public IDictionary<string, Func<string[], IRunable>> Feeds = new Dictionary<string, Func<string[], IRunable>>()
         {
             {"updatecv", param => Start<IPublishDateUpdater>()},
             {"updatecvwithparam", Start<IPublishDateUpdater>}
@@ -49,10 +48,29 @@ namespace YRM.Fulfillment.Processing
 
         public void PerformAction(string action, params string[] param)
         {
-            if (!Actions.ContainsKey(action))
-                throw new ArgumentException("Invalid parameter", nameof(action));
-            var exec = Actions[action](param);
-            exec.Run();
+            if (!Feeds.ContainsKey(action))
+                throw new ArgumentException("Invalid feed", nameof(action));
+            var executioner = Feeds[action](param);
+            executioner.OnComplete += Executioner_OnComplete;
+            executioner.OnFault += Executioner_OnFault;
+            executioner.Run();
+        }
+
+        private void Executioner_OnFault(object sender, Exception e)
+        {
+            if (e is ArgumentException)
+            {
+                Console.WriteLine(e.Message);
+            }
+            else
+            {
+                throw e;
+            }
+        }
+
+        private void Executioner_OnComplete(object sender, EventArgs e)
+        {
+            Console.WriteLine("Done!");
         }
     }
 }
