@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YRM.Fulfillment.Processing.Args
+﻿namespace YRM.Fulfillment.Processing.Args
 {
     public interface IWebSite
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using Ninject.Modules;
+﻿using Ninject.Modules;
 using YRM.Fulfillment.Processing.Args;
 using YRM.Fulfillment.Processing.Feeds;
 
